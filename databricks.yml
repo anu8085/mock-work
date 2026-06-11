@@ -6,6 +6,12 @@
 bundle:
   name: benefits-navigator
 
+# Force-include app.yaml in the deploy upload even though it is git-ignored
+# (DABs sync respects .gitignore by default, which would otherwise drop app.yaml).
+sync:
+  include:
+    - app.yaml
+
 targets:
   hackathon-free:
     default: true
