@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment / secrets (never commit real env files)
+.env
+.env.*
+!.env.example
+
+# Local SQLite app-state fallback (never commit)
+.local_state/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs / caches
+*.log
+.pytest_cache/
+.streamlit/secrets.toml

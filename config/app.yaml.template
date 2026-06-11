@@ -1,0 +1,61 @@
+# app.yaml template - safe V12 version.
+# Replace placeholder values only after creating resources in your new Databricks Free Edition workspace.
+# Do not hardcode API keys, PATs, Lakebase passwords, or connection secrets in this file.
+
+command: ["streamlit", "run", "app.py"]
+
+env:
+  - name: ANTHROPIC_API_KEY
+    valueFrom: anthropic-api-key
+
+  - name: CLAUDE_MODEL
+    value: "claude-sonnet-4-5-20250929"
+
+  - name: BENEFITS_DATA_MODE
+    value: "databricks_first"
+
+  - name: DATABRICKS_SERVER_HOSTNAME
+    value: "<workspace-host-without-https>"
+
+  - name: DATABRICKS_HTTP_PATH
+    value: "/sql/1.0/warehouses/<warehouse-id>"
+
+  - name: DATABRICKS_TOKEN
+    valueFrom: databricks-token
+
+  - name: SHOW_LOCAL_STATE_DEBUG
+    value: "false"
+
+  # V12 Lakebase decision:
+  # Use native Lakebase/Postgres password for hackathon reliability.
+  # Databricks App + Lakebase resource should provide PGHOST, PGPORT,
+  # PGDATABASE, and PGSSLMODE where available.
+  # Supply only the user/password through secrets.
+  - name: PGUSER
+    valueFrom: lakebase-user
+
+  - name: PGPASSWORD
+    valueFrom: lakebase-password
+
+  # Optional compatibility aliases if your code/deployment UI prefers LAKEBASE_*.
+  - name: LAKEBASE_USER
+    valueFrom: lakebase-user
+
+  - name: LAKEBASE_PASSWORD
+    valueFrom: lakebase-password
+
+  # The Lakebase resource binding. Keep this as a resource reference, not a secret.
+  - name: LAKEBASE_ENDPOINT
+    valueFrom: lakebase-db
+
+resources:
+  - name: lakebase-db
+    type: lakebase
+  - name: anthropic-api-key
+    type: secret
+  - name: databricks-token
+    type: secret
+  - name: lakebase-user
+    type: secret
+  - name: lakebase-password
+    type: secret
