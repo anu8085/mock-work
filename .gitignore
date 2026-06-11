@@ -31,3 +31,7 @@ config/env.local
 
 # Screenshots that may contain secrets
 *.secret.png
+
+# Deployment: app.yaml.template is committed; the real app.yaml is NOT (may hold
+# workspace-specific values or accidental secrets).
+app.yaml

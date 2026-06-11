@@ -1,0 +1,25 @@
+# databricks.yml - Declarative Automation Bundle for Benefits Navigator.
+# Deploy target uses the hackathon-free (Free Edition) profile ONLY. Never `dev`.
+# No secret VALUES here - only the app definition. Resource/secret bindings are
+# attached at Prompt 7 (UI/CLI) and validated with `databricks bundle validate`.
+
+bundle:
+  name: benefits-navigator
+
+targets:
+  hackathon-free:
+    default: true
+    workspace:
+      profile: hackathon-free
+
+resources:
+  apps:
+    benefits-navigator:
+      name: benefits-navigator
+      description: "Benefits Navigator for Families - NJ (Streamlit + Unity Catalog + Lakebase)"
+      source_code_path: .
+      # NOTE (Prompt 7): attach resources here after `databricks bundle validate`
+      # confirms the exact field names, OR attach via the Apps UI:
+      #   - Lakebase database  -> injects PGHOST/PGPORT/PGDATABASE/PGSSLMODE
+      #   - SQL warehouse      -> trusted-data read
+      #   - secrets: anthropic-api-key, databricks-token, lakebase-user, lakebase-password

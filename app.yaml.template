@@ -1,57 +1,55 @@
 # app.yaml template - SAFE placeholders only.
-# Copy to app.yaml in your NEW Databricks Free Edition workspace and fill values via
-# resources/secrets. NEVER hardcode API keys, PATs, or Lakebase passwords here.
+# Copy to app.yaml in your NEW Databricks Free Edition workspace. Secret/resource NAMES
+# are referenced via valueFrom; actual values are configured as Databricks App
+# resources/secrets (see docs/DEPLOYMENT.md). NEVER put real secrets in this file.
 
-command: ["streamlit", "run", "app.py"]
+command:
+  - streamlit
+  - run
+  - app.py
+  - --server.port
+  - "${DATABRICKS_APP_PORT:-8000}"   # platform-assigned port (only allowed expansion)
+  - --server.address
+  - "0.0.0.0"                          # NOT localhost / 127.0.0.1
 
 env:
+  # --- Streamlit on Databricks Apps: BOTH must be disabled (reverse-proxy origin) ---
+  - name: STREAMLIT_SERVER_ENABLE_CORS
+    value: "false"
+  - name: STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION
+    value: "false"
+
+  # --- Anthropic (secret) ---
   - name: ANTHROPIC_API_KEY
     valueFrom: anthropic-api-key
-
   - name: CLAUDE_MODEL
     value: "claude-sonnet-4-5-20250929"
 
+  # --- Trusted data: Unity Catalog via SQL Warehouse (Option A: PAT) ---
   - name: BENEFITS_DATA_MODE
     value: "databricks_first"
-
   - name: DATABRICKS_SERVER_HOSTNAME
     value: "<workspace-host-without-https>"
-
   - name: DATABRICKS_HTTP_PATH
     value: "/sql/1.0/warehouses/<warehouse-id>"
-
   - name: DATABRICKS_TOKEN
     valueFrom: databricks-token
 
   - name: SHOW_LOCAL_STATE_DEBUG
     value: "false"
 
-  # V12 Lakebase decision: native Postgres password auth.
-  # The Databricks App + Lakebase resource should inject PGHOST/PGPORT/PGDATABASE/
-  # PGSSLMODE where available; supply only the user/password through secrets.
+  # --- Lakebase app-state: native Postgres password (V12, owner role) ---
+  # PGHOST / PGPORT / PGDATABASE / PGSSLMODE are AUTO-INJECTED by the attached Lakebase
+  # resource - do NOT set them here. Supply only user/password via secrets.
   - name: PGUSER
     valueFrom: lakebase-user
   - name: PGPASSWORD
     valueFrom: lakebase-password
-
-  # Compatibility aliases if your deployment UI prefers LAKEBASE_*.
+  # Optional LAKEBASE_* aliases (client accepts either); harmless if unused.
   - name: LAKEBASE_USER
     valueFrom: lakebase-user
   - name: LAKEBASE_PASSWORD
     valueFrom: lakebase-password
 
-  # Lakebase resource binding (a resource reference, not a secret).
-  - name: LAKEBASE_ENDPOINT
-    valueFrom: lakebase-db
-
-resources:
-  - name: lakebase-db
-    type: lakebase
-  - name: anthropic-api-key
-    type: secret
-  - name: databricks-token
-    type: secret
-  - name: lakebase-user
-    type: secret
-  - name: lakebase-password
-    type: secret
+# Resources (Lakebase database, SQL warehouse, secrets) are declared in databricks.yml
+# or attached via the Databricks Apps UI; app.yaml references them by name via valueFrom.
