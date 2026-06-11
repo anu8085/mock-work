@@ -3,14 +3,37 @@
 Use prompts in this order.
 
 ## 1. Master prompt
+For the real hackathon
 
-After the hackathon officially starts and you create the new repo, open Claude Code or another organizer-approved coding assistant in the new repo and paste:
+After the hackathon officially starts and you create the new public GitHub repo, open Claude Code or another organizer-approved coding assistant in the new repo and paste:
 
 `prompts/00_MASTER_PROMPT_START_HERE.md`
 
+Then paste:
+
+`prompts/00A_OFFICIAL_RULES_GUARDRAILS.md`
+
+This ensures Claude understands the official hackathon rule constraints before starting Prompt 1.
+
 Then say:
 
-`Start Phase 0 and guide me step by step.`
+`Start Phase 0 and guide me step by step. Do not create, modify, or commit files until you explain the goal, the files involved, and the validation steps.`
+
+For the mock hackathon dry run
+
+Use a separate mock repo/folder only. Do not treat the mock repo as the final submission repo.
+
+Paste:
+
+`prompts/00_MASTER_PROMPT_START_HERE.md`
+
+Then paste:
+
+`prompts/00A_OFFICIAL_RULES_GUARDRAILS.md`
+
+Then say:
+
+`We are doing a mock hackathon dry run only. Start Phase 0 and guide me step by step. Do not commit automatically. Wait for my validation after each prompt.`
 
 ## 2. Ordered build prompts
 
