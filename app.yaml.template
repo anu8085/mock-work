@@ -4,13 +4,11 @@
 # resources/secrets (see docs/DEPLOYMENT.md). NEVER put real secrets in this file.
 
 command:
-  - streamlit
-  - run
-  - app.py
-  - --server.port
-  - "${DATABRICKS_APP_PORT:-8000}"   # platform-assigned port (only allowed expansion)
-  - --server.address
-  - "0.0.0.0"                          # NOT localhost / 127.0.0.1
+  # Use sh -c so the shell expands ${DATABRICKS_APP_PORT:-8000}. The Apps command
+  # runner does NOT expand the bash :- default form, so pass it through a shell.
+  - sh
+  - -c
+  - streamlit run app.py --server.port ${DATABRICKS_APP_PORT:-8000} --server.address 0.0.0.0
 
 env:
   # --- Streamlit on Databricks Apps: BOTH must be disabled (reverse-proxy origin) ---
